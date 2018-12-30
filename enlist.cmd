@@ -69,7 +69,13 @@ ECHO Enlisting %1 to: %CD%\%1 ...
 
 IF NOT EXIST WixToolset.sln dotnet new sln -n WixToolset || GOTO :EnlistDone
 
-git clone https://github.com/wixtoolset/%1.git || GOTO :EnlistDone
+rem //replace /home instead
+rem //try --version for git and dotnet
+rem git clone https://github.com/wixtoolset/%1.git || GOTO :EnlistDone
+git clone --progress --verbose git@github.com:rseanhall/%1.git || GOTO :EnlistDone
+cd %1
+git remote add upstream git@github.com:wixtoolset/%1.git || GOTO :EnlistDone
+cd ..
 FOR /R %1 %%F IN (*.csproj) DO dotnet sln WixToolset.sln add %%~fF || GOTO :EnlistDone
 FOR /R %1 %%F IN (*.vcxproj) DO echo "%%~fF" must be manually added to WixToolset.sln.
 FOR /R %1 %%F IN (*.wixproj) DO echo "%%~fF" must be manually added to WixToolset.sln.
